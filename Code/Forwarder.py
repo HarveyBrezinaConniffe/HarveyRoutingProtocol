@@ -29,5 +29,8 @@ def recievePacket(data, addr):
 		sock.sendto(data, (nextHop, PORT))
 
 while True:
-	data, addr = sock.recvfrom(512)
-	recievePacket(data, addr)
+	try:
+		data, addr = sock.recvfrom(512)
+		recievePacket(data, addr)
+	except:
+		pass
