@@ -5,7 +5,6 @@ PORT = 54321
 
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 sock.bind(("", PORT))
-sock.settimeout(3)
 
 # Map dest ID to next node IP
 forwardingTable = {}
@@ -21,8 +20,7 @@ def recievePacket(data, addr):
 	packet = Packets.decodePacket(data)
 	if packet == None:
 		return
-
-	if packet.type == Packets.typeToNum["MessagePacket"]:
+	if packet.type == Packets.typeToNum["Message"]:
 		print("Recieving packet destined for {} with payload {}".format(packet.dest, packet.payload))
 		nextHop = forwardingTable[packet.dest.lower()]
 		print("Next hop is {}".format(nextHop))
