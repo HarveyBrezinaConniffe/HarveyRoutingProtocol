@@ -8,9 +8,9 @@ docker create -ti --name client --cap-add=all -v /Users/harvey/HarveyRoutingProt
 
 docker create -ti --name server --cap-add=all -v /Users/harvey/HarveyRoutingProtocol/Code:/home/Code serverimage /bin/bash
 
-docker create -ti --name forwarder1 --cap-add=all -v /Users/harvey/HarveyRoutingProtocol/Code:/home/Code forwarder /bin/bash
-docker create -ti --name forwarder2 --cap-add=all -v /Users/harvey/HarveyRoutingProtocol/Code:/home/Code forwarder /bin/bash
-docker create -ti --name forwarder3 --cap-add=all -v /Users/harvey/HarveyRoutingProtocol/Code:/home/Code forwarder /bin/bash
+docker create -ti --name forwarder1 --cap-add=all -v /Users/harvey/HarveyRoutingProtocol/Code:/home/Code forwarderimage /bin/bash
+docker create -ti --name forwarder2 --cap-add=all -v /Users/harvey/HarveyRoutingProtocol/Code:/home/Code forwarderimage /bin/bash
+docker create -ti --name forwarder3 --cap-add=all -v /Users/harvey/HarveyRoutingProtocol/Code:/home/Code forwarderimage /bin/bash
 
 
 docker network connect homeNetwork client
