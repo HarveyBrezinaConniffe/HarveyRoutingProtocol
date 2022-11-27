@@ -2,3 +2,4 @@
 docker build -t forwarderimage ./Forwarder
 docker build -t clientimage ./Client
 docker build -t serverimage ./Server
+docker build -t controllerimage ./Controller
