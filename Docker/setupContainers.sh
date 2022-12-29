@@ -3,7 +3,7 @@ docker network create -d bridge --subnet 172.40.0.0/16 homeNetwork
 docker network create -d bridge --subnet 172.41.0.0/16 ispNetwork
 docker network create -d bridge --subnet 172.42.0.0/16 publicNetwork
 docker network create -d bridge --subnet 172.43.0.0/16 cloudProviderNetwork
-docker network create -d bridge --subnet 192.168.32.0/16 ControllerNetwork
+docker network create -d bridge --subnet 172.50.0.0/16 controllerNetwork
 
 docker create -ti --name controller --cap-add=all -v /Users/harvey/HarveyRoutingProtocol/Code:/home/Code controllerimage /bin/bash
 
