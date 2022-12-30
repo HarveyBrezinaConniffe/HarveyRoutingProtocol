@@ -2,7 +2,7 @@ import socket
 import Packets
 
 PORT = 54321
-CONTROLLER_IP = "172.50.0.2"
+CONTROLLER_IP = "172.50.0.0"
 
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 sock.bind(("", PORT))
