@@ -1,4 +1,4 @@
-typeToNum = {"Message": 0}
+typeToNum = {"Message": 0, "RequestInfo": 1}
 
 class MessagePacket():
 	def __init__(self, dest, payload):
@@ -25,7 +25,39 @@ class MessagePacket():
 		payload = packet[4:]
 		return cls(dest, payload)
 
-numToClass = {0: MessagePacket}
+class RequestInfoPacket():
+	def __init__(self, dest, forwarderName):
+		self.type = typeToNum["RequestInfo"]
+
+		self.dest = dest
+		destByteStrs = dest.split(":")
+		self.destBytes = [bytes(bytearray.fromhex(x)) for x in destByteStrs]
+
+		self.forwarderName = forwarderName
+		forwarderNameByteStrs = forwarderName.split(":")
+		self.forwarderNameBytes = [bytes(bytearray.fromhex(x)) for x in forwarderNameByteStrs]
+	
+	def encode(self):
+		# Store type of packet in first byte
+		typeByte = (self.type).to_bytes(1, byteorder='big')
+		encoding = typeByte
+
+		for byte in self.destBytes:
+			encoding += byte
+
+		for byte in self.forwarderNameBytes:
+			encoding += byte
+      
+		# Return packet bytes
+		return encoding
+
+	@classmethod
+	def decode(cls, packet):
+		dest = packet[1:4].hex(":")
+		forwarderName = packet[4:7].hex(":")
+		return cls(dest, forwarderName)
+
+numToClass = {0: MessagePacket, 1: RequestInfoPacket}
 
 def decodePacket(packet):
 	packetType = packet[0]
