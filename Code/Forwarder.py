@@ -40,6 +40,7 @@ def recievePacket(data, addr):
     for bufferedPacket in packetBuffer[packet.dest]:
       print("Sending buffered packet")
       sock.sendto(bufferedPacket, (packet.nextHop, PORT))
+    packetBuffer[packet.dest] = []
 
 while True:
   data, addr = sock.recvfrom(512)
