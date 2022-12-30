@@ -28,6 +28,15 @@ def recievePacket(data, addr):
     reqPacket = Packets.RequestInfoPacket(packet.dest, myName)
     sock.sendto(reqPacket.encode(), (CONTROLLER_IP, PORT))
 
+  if packet.type == Packets.typeToNum["NextHop"]:
+    print("Recieved next hop for packets destined for {} (Next hop is {})".format(packet.dest, packet.nextHop))
+    if packet.dest not in packetBuffer:
+      packetBuffer[packet.dest] = []
+
+    for bufferedPacket in packetBuffer[packet.dest]:
+      print("Sending buffered packet")
+      sock.sendto(bufferedPacket, (packet.nextHop, PORT))
+
 while True:
   data, addr = sock.recvfrom(512)
   recievePacket(data, addr)
