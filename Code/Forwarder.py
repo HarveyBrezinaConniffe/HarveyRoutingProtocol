@@ -2,7 +2,7 @@ import socket
 import Packets
 
 PORT = 54321
-CONTROLLER_IP = "172.50.0.0"
+CONTROLLER_IP = "172.25.0.10"
 
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 sock.bind(("", PORT))
@@ -21,7 +21,11 @@ def recievePacket(data, addr):
 
   if packet.type == Packets.typeToNum["Message"]:
     print("Recieving packet destined for {} with payload {}".format(packet.dest, packet.payload))
-    print("Buffering packet and asking controller for info.").
+    print("Buffering packet and asking controller for info.")
+    if packet.dest == myName:
+      print("ARRIVED FOR ME")
+      return
+
     if packet.dest not in packetBuffer:
       packetBuffer[packet.dest] = []
     packetBuffer[packet.dest].append(data) 

@@ -12,9 +12,9 @@ Link = namedtuple("Link", ["destIP", "destName"])
 
 # Graph of network topology as an adjacency list 
 topology = {
-    "FF:00:00": [Link("172.17.17.1", "FF:00:01")],
-    "FF:00:01": [Link("172.17.17.0", "FF:00:00"), Link("172.17.18.1", "FF:00:02")],
-    "FF:00:02": [Link("172.17.18.0", "FF:00:01")]
+    "ff:00:00": [Link("172.20.17.11", "ff:00:01")],
+    "ff:00:01": [Link("172.20.17.10", "ff:00:00"), Link("172.20.18.11", "ff:00:02")],
+    "ff:00:02": [Link("172.20.18.10", "ff:00:01")]
 }
 
 def shortestPaths(topologyGraph, source):
@@ -61,7 +61,6 @@ def recievePacket(data, addr):
     responsePacket = Packets.NextHopPacket(packet.dest, closestIP)
     sock.sendto(responsePacket.encode(), (addr[0], PORT))
 
-if __name__ == "main":
-  while True:
-    data, addr = sock.recvfrom(512)
-    recievePacket(data, addr)
+while True:
+  data, addr = sock.recvfrom(512)
+  recievePacket(data, addr)
