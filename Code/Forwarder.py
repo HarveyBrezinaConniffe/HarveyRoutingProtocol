@@ -2,31 +2,45 @@ import socket
 import Packets
 
 PORT = 54321
-CONTROLLER_IP = "172.50.0.2"
+CONTROLLER_IP = "172.25.0.10"
 
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 sock.bind(("", PORT))
 
-# Map dest ID to next node IP
-nextHop = None
+myName = input("Forwarder Name> ")
 
-myIP = input("> ")
-print("Sending Hello to controller!")
-sock.sendto(Packets.HelloPacket(myIP).encode(), (CONTROLLER_IP, PORT))
+# Store packets grouped by final destination
+packetBuffer = {}
 
 def recievePacket(data, addr):
-  global nextHop
   print("PACKET INCOMING")
   packet = Packets.decodePacket(data)
+
   if packet == None:
     return
+
   if packet.type == Packets.typeToNum["Message"]:
     print("Recieving packet destined for {} with payload {}".format(packet.dest, packet.payload))
-    print("Next hop is {}".format(nextHop))
-    sock.sendto(data, (nextHop, PORT))
+    print("Buffering packet and asking controller for info.")
+    if packet.dest == myName:
+      print("ARRIVED FOR ME")
+      return
+
+    if packet.dest not in packetBuffer:
+      packetBuffer[packet.dest] = []
+    packetBuffer[packet.dest].append(data) 
+    reqPacket = Packets.RequestInfoPacket(packet.dest, myName)
+    sock.sendto(reqPacket.encode(), (CONTROLLER_IP, PORT))
+
   if packet.type == Packets.typeToNum["NextHop"]:
-    print("Recieving flow information")
-    nextHop = packet.hopIP
+    print("Recieved next hop for packets destined for {} (Next hop is {})".format(packet.dest, packet.nextHop))
+    if packet.dest not in packetBuffer:
+      packetBuffer[packet.dest] = []
+
+    for bufferedPacket in packetBuffer[packet.dest]:
+      print("Sending buffered packet")
+      sock.sendto(bufferedPacket, (packet.nextHop, PORT))
+    packetBuffer[packet.dest] = []
 
 while True:
   data, addr = sock.recvfrom(512)
