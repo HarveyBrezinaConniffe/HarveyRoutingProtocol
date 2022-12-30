@@ -48,12 +48,18 @@ def recievePacket(data, addr):
   packet = Packets.decodePacket(data)
   if packet == None:
     return
-  if packet.type == Packets.typeToNum["Hello"]:
-    print("Recieving hello from {}".format(packet.routerIP))
-    nextHop = routingTable[packet.routerIP]
-    response = Packets.NextHopPacket(routingTable[packet.routerIP]).encode()
-    print("Replying to {}".format(addr[0]))
-    sock.sendto(response, (addr[0], PORT))
+  if packet.type == Packets.typeToNum["RequestInfo"]:  
+    print("Forwarder {} requesting nextHop for {}".format(packet.forwarderName, packet.dest))
+    distances = shortestPaths(topology, packet.dest)
+    closestDistance = inf
+    closestIP = None
+    for link in topology[packet.forwarderName]:
+      if distances[link.destName] < closestDistance:
+        closestDistance = distances[link.destName]
+        closestIP = link.destIP
+    print("Closest hop is {}".format(closestIP))
+    responsePacket = Packets.NextHopPacket(packet.dest, closestIP)
+    sock.sendto(responsePacket.encode(), (addr[0], PORT))
 
 if __name__ == "main":
   while True:
