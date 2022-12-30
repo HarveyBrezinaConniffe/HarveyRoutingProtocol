@@ -7,6 +7,8 @@ CONTROLLER_IP = "172.25.0.10"
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 sock.bind(("", PORT))
 
+services = {}
+
 myName = input("Forwarder Name> ")
 
 # Store packets grouped by final destination
@@ -22,8 +24,9 @@ def recievePacket(data, addr):
   if packet.type == Packets.typeToNum["Message"]:
     print("Recieving packet destined for {} with payload {}".format(packet.dest, packet.payload))
     print("Buffering packet and asking controller for info.")
-    if packet.dest == myName:
-      print("ARRIVED FOR ME")
+    if packet.dest in services:
+      print("Recieved packet for service.")
+      sock.sendto(data, (services[packet.dest][0], services[packet.dest][1]))
       return
 
     if packet.dest not in packetBuffer:
@@ -41,6 +44,11 @@ def recievePacket(data, addr):
       print("Sending buffered packet")
       sock.sendto(bufferedPacket, (packet.nextHop, PORT))
     packetBuffer[packet.dest] = []
+
+  if packet.type == Packets.typeToNum["AddService"]:
+    services[packet.name] = [addr[0], packet.port]
+    controllerUpdatePacket = Packets.AddServicePacket(packet.name, packet.port, myName)
+    sock.sendto(controllerUpdatePacket.encode(), (CONTROLLER_IP, PORT))
 
 while True:
   data, addr = sock.recvfrom(512)
