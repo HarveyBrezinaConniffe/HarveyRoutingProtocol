@@ -26,7 +26,7 @@ def recievePacket(data, addr):
       packetBuffer[packet.dest] = []
     packetBuffer[packet.dest].append(data) 
     reqPacket = Packets.RequestInfoPacket(packet.dest, myName)
-    sock.send(reqPacket.encode())
+    sock.sendto(reqPacket.encode(), (CONTROLLER_IP, PORT))
 
 while True:
   data, addr = sock.recvfrom(512)
