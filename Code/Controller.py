@@ -1,3 +1,4 @@
+from collections import namedtuple
 import socket
 import Packets
 
@@ -6,7 +7,15 @@ PORT = 54321
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 sock.bind(("", PORT))
 
-routingTable = {"172.41.0.2": "172.41.0.3", "172.42.0.2": "172.42.0.3", "172.43.0.3": "172.43.0.2"}
+Link = namedtuple("Link", ["destIP", "destName"])
+
+# Graph of network topology as an adjacency list 
+topology = {
+    "FF:00:00": [Link("172.17.17.1", "FF:00:01")],
+    "FF:00:01": [Link("172.17.17.0", "FF:00:00"), Link("172.17.18.1", "FF:00:02")],
+    "FF:00:02": [Link("172.17.18.0", "FF:00:01"), Link("172.17.19.1", "FF:00:03")],
+    "FF:00:03": [Link("172.17.19.0", "FF:00:02"]
+}
 
 def recievePacket(data, addr):
   packet = Packets.decodePacket(data)
