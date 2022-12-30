@@ -60,6 +60,10 @@ def recievePacket(data, addr):
     print("Closest hop is {}".format(closestIP))
     responsePacket = Packets.NextHopPacket(packet.dest, closestIP)
     sock.sendto(responsePacket.encode(), (addr[0], PORT))
+  if packet.type == Packets.typeToNum["AddService"]:
+    print("New Service")
+    topology[packet.forwarderName].append(Link("-1", packet.name))
+    topology[packet.name] = [Link("-1", packet.forwarderName)]
 
 while True:
   data, addr = sock.recvfrom(512)
