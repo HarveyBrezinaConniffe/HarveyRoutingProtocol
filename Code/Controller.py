@@ -13,8 +13,7 @@ Link = namedtuple("Link", ["destIP", "destName"])
 topology = {
     "FF:00:00": [Link("172.17.17.1", "FF:00:01")],
     "FF:00:01": [Link("172.17.17.0", "FF:00:00"), Link("172.17.18.1", "FF:00:02")],
-    "FF:00:02": [Link("172.17.18.0", "FF:00:01"), Link("172.17.19.1", "FF:00:03")],
-    "FF:00:03": [Link("172.17.19.0", "FF:00:02")]
+    "FF:00:02": [Link("172.17.18.0", "FF:00:01")]
 }
 
 def recievePacket(data, addr):
