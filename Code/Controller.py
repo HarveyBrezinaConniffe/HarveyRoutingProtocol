@@ -1,6 +1,7 @@
 from collections import namedtuple
 import socket
 import Packets
+from math import inf
 
 PORT = 54321
 
@@ -16,6 +17,33 @@ topology = {
     "FF:00:02": [Link("172.17.18.0", "FF:00:01")]
 }
 
+def shortestPaths(topologyGraph, source):
+  unfinalized = []
+  distances = {}
+
+  for node in topologyGraph:
+    distances[node] = inf
+    unfinalized.append(node)
+
+  distances[source] = 0
+  current = source
+
+  while len(unfinalized) > 1:
+    for link in topologyGraph[current]:
+      distances[link.destName] = min(distances[link.destName], distances[current]+1)
+    unfinalized.remove(current)
+
+    minDist = distances[unfinalized[0]]
+    minNode = unfinalized[0]
+    for node in unfinalized:
+      if distances[node] < minDist:
+        minDist = distances[node]
+        minNode = node
+    current = minNode
+  
+  return distances
+    
+
 def recievePacket(data, addr):
   packet = Packets.decodePacket(data)
   if packet == None:
@@ -27,6 +55,7 @@ def recievePacket(data, addr):
     print("Replying to {}".format(addr[0]))
     sock.sendto(response, (addr[0], PORT))
 
-while True:
-  data, addr = sock.recvfrom(512)
-  recievePacket(data, addr)
+if __name__ == "main":
+  while True:
+    data, addr = sock.recvfrom(512)
+    recievePacket(data, addr)
