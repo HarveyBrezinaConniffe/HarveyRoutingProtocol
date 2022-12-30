@@ -7,8 +7,8 @@ docker stop forwarder3
 docker stop controller
 
 docker network remove homeNetwork
-docker network remove ispNetwork
-docker network remove publicNetwork
+docker network remove internalNetwork1
+docker network remove internalNetwork2
 docker network remove cloudProviderNetwork
 docker network remove controllerNetwork
 
